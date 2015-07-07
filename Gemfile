@@ -15,6 +15,7 @@ end
 gem 'bootstrap-sass'
 gem 'high_voltage'
 gem 'therubyracer', :platform=>:ruby
+# Development gems
 group :development do
   gem 'better_errors'
   gem 'hub', :require=>nil
@@ -30,11 +31,13 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'sqlite3'
 end
+# Production gems
 group :production do
   gem 'pg'
   gem 'puma'
   gem 'rails_12factor'
 end
+# Test gems
 group :test do
   gem 'capybara'
   gem 'database_cleaner'
