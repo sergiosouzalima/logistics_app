@@ -31,5 +31,6 @@ ActiveRecord::Schema.define(version: 20150707150602) do
   end
 
   add_index "routes", ["map_id"], name: "index_routes_on_map_id"
+  add_index "routes", ["origin_point", "distance"], name: "index_routes_on_origin_point_and_distance"
 
 end

@@ -61,3 +61,11 @@ Ruby On Rails também permite a integração com outras linguagens e ferramentas
 e caso seja necessário, esta solução poderá ser integrada com outras
 tecnologias para questões de performance por exemplo.
 
+Instalação
+-------------------------
+
+Ao instalar, para reinicializar e alimentar o banco de dados com dados de exemplo,
+lembre-se de executar no diretório da aplicação:
+
+- rake db:setup
+

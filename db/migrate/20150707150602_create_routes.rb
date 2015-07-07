@@ -8,5 +8,6 @@ class CreateRoutes < ActiveRecord::Migration
 
       t.timestamps null: false
     end
+    add_index(:routes, [:origin_point, :distance])
   end
 end
