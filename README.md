@@ -94,3 +94,24 @@ lembre-se de executar no diretório da aplicação:
 }
 ```
 
+**Exemplo de respostas com mensagem de erro:**
+
+```html
+{
+  "name":"XX",
+  "status":"ERROR",
+  "code":"WRONG_DATA",
+  "fallback_msg":"map_name not found"
+}
+```
+
+```html
+{
+  "name":"SP",
+  "status":"ERROR",
+  "code":"WRONG_DATA",
+  "fallback_msg":"origin route not found"
+}
+```
+
+

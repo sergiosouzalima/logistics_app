@@ -88,8 +88,8 @@ RSpec.describe Api::V1::BaseController, :type => :controller do
       end
       describe "and object is present and api_parameter is nil" do
         before do
-          @error_object = ActiveRecord::RecordNotFound.new
-          @result = Api::V1::BaseController.error_message( nil, @error_object )
+          @error = "map_name not found"
+          @result = Api::V1::BaseController.error_message( nil, @error )
         end
         it "returns a hash" do
           expect(@result).to be_an_instance_of(Hash)
@@ -97,15 +97,15 @@ RSpec.describe Api::V1::BaseController, :type => :controller do
         it "returns a hash with error elements" do
           expect(@result[:status]).to eql 'ERROR'
           expect(@result[:code]).to eql 'TOO_FEW_PARAMETERS'
-          expect(@result[:fallback_msg]).to eql @error_object.message
+          expect(@result[:fallback_msg]).to eql @error
         end
       end
     end
     context "when valid parameters" do
       describe "both parameters are present" do
         before do
-          @error_object = ActiveRecord::RecordNotFound.new
-          @result = Api::V1::BaseController.error_message( {name: "SP"}, @error_object )
+          @error = "origin route not found"
+          @result = Api::V1::BaseController.error_message( {name: "SP"}, @error )
         end
         it "returns a hash" do
           expect(@result).to be_an_instance_of(Hash)
@@ -114,7 +114,7 @@ RSpec.describe Api::V1::BaseController, :type => :controller do
           expect(@result[:status]).to eql 'ERROR'
           expect(@result[:code]).to eql 'WRONG_DATA'
           expect(@result[:name]).to eql 'SP'
-          expect(@result[:fallback_msg]).to eql @error_object.message
+          expect(@result[:fallback_msg]).to eql @error
         end
       end
     end

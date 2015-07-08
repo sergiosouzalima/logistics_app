@@ -16,6 +16,7 @@ class Api::V1::BaseController < ActionController::Base
     # find the cheapest route algorithm begins here....
     #
     route = Route.where( origin_point: origin, map_id: map_id, destination_point: destination )
+    return "destination route not found" if route.empty?
     distance          = route.pluck( :distance )[0]
     destination_point = route.pluck(:destination_point)[0]
     total_cost        = fuel_price.to_f / fuel_autonomy.to_f * distance.to_f
@@ -25,8 +26,8 @@ class Api::V1::BaseController < ActionController::Base
   def self.error_message( api_params = nil, object = nil )
     return {} if api_params.nil? && object.nil?
     return {status: 'ERROR', code: 'TOO_FEW_PARAMETERS', fallback_msg: 'EMPTY OBJECT PARAMETER'} if api_params && object.nil?
-    return {status: 'ERROR', code: 'TOO_FEW_PARAMETERS', fallback_msg: object.message} if api_params.nil? && object
-    return api_params.merge({status: 'ERROR', code: 'WRONG_DATA', fallback_msg: object.message}) if api_params && object
+    return {status: 'ERROR', code: 'TOO_FEW_PARAMETERS', fallback_msg: object} if api_params.nil? && object
+    return api_params.merge({status: 'ERROR', code: 'WRONG_DATA', fallback_msg: object}) if api_params && object
   end
 
   def self.success_message(api_params = nil, message = nil)
