@@ -3,7 +3,7 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::RoutesController, :type => :controller do
 
-  context "POST create_map" do
+  context "POST #create_map" do
     context "when invalid parameters" do
       describe "and map_name was not found" do
         before do
@@ -16,6 +16,8 @@ RSpec.describe Api::V1::RoutesController, :type => :controller do
         it "returns success code" do
           # test for the 200 status-code
           expect(response).to be_success
+        end
+        it "*** under construction ***" do
         end
       end
     end
