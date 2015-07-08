@@ -69,3 +69,23 @@ lembre-se de executar no diretório da aplicação:
 
 - rake db:setup
 
+
+### CONSULTA DE ROTAS
+
+**Exemplo de consulta pelo browser:**
+
+- **GET** [http://localhost:3000/api/v1/routes/get_route.json?map_name=SP&origin=A&destination=B&fuel_autonomy=10&fuel_price=2.5](http://localhost:3000/api/v1/routes/get_route.json?map_name=SP&origin=A&destination=B&fuel_autonomy=10&fuel_price=2.5)
+
+**Exemplo de resposta:**
+
+```html
+{
+  "name":"SP",
+  "status":"OK",
+  "code":"OK",
+  "fallback_msg":{
+    "distance":20,"cost":5.0,"directions":["A","C"]
+  }
+}
+```
+
