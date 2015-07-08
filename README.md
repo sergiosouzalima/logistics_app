@@ -71,6 +71,7 @@ lembre-se de executar no diretório da aplicação:
 
 
 ### CONSULTA DE ROTAS
+-------------------------
 
 **Exemplo de consulta pelo browser:**
 
