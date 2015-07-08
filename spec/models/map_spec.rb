@@ -15,7 +15,7 @@ RSpec.describe Map, type: :model do
     context 'name' do
       it "has a valid content" do
         map = FactoryGirl.create(:map)
-        expect(map.name).to eql "Sao Paulo"
+        expect(map.name).to eql "SP"
       end
       it "is invalid without a name" do
         expect( FactoryGirl.build(:map, name: nil) ).not_to be_valid

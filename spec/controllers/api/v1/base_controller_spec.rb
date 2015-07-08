@@ -3,6 +3,63 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::BaseController, :type => :controller do
 
+  context "#find_the_cheapest_route" do
+    context "when valid parameters" do
+      describe "and a route is found" do
+        before do
+          FactoryGirl.create(:map)
+          FactoryGirl.create(:route)
+          @result = Api::V1::BaseController.find_the_cheapest_route( 'SP', 'A', 'B', 10, 2.5 )
+        end
+        it "returns a Hash" do
+          expect(@result).to be_an_instance_of(Hash)
+        end
+        it "returns a hash with valid elements" do
+          expect(@result[:distance]).to eql 10
+          expect(@result[:cost]).to eql 2.5
+          expect(@result[:directions]).to eql ['A','B']
+        end
+      end
+    end
+    context "when invalid parameters" do
+      describe "and no parameters are present" do
+        before do
+          @result = Api::V1::BaseController.find_the_cheapest_route( nil, nil, nil, nil, nil )
+        end
+        it "returns a String" do
+          expect(@result).to be_an_instance_of(String)
+        end
+        it "returns an error message" do
+          expect(@result).to eql "invalid parameter"
+        end
+      end
+      describe "and Map was not found" do
+        before do
+          @result = Api::V1::BaseController.find_the_cheapest_route( 'XX', 'A', 'D', 10, 2.5 )
+        end
+        it "returns a String" do
+          expect(@result).to be_an_instance_of(String)
+        end
+        it "returns an error message" do
+          expect(@result).to eql "map_name not found"
+        end
+      end
+      describe "and Origin Route was not found" do
+        before do
+          FactoryGirl.create(:map)
+          FactoryGirl.create(:route)
+          @result = Api::V1::BaseController.find_the_cheapest_route( 'SP', 'X', 'D', 10, 2.5 )
+        end
+        it "returns a String" do
+          expect(@result).to be_an_instance_of(String)
+        end
+        it "returns an error message" do
+          expect(@result).to eql "origin route not found"
+        end
+      end
+    end
+  end
+
   context "#error_message" do
     context "when invalid parameters" do
       describe "and no parameters are present" do

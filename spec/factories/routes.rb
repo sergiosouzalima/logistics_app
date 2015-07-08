@@ -3,6 +3,6 @@ FactoryGirl.define do
     origin_point "A"
     destination_point "B"
     distance 10
-    map nil
+    map_id 1
   end
 end

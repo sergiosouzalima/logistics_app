@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :map do
-    name "Sao Paulo"
+    name "SP"
   end
 
 end

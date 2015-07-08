@@ -6,6 +6,22 @@ class Api::V1::BaseController < ActionController::Base
     params.permit!
   end
 
+  def self.find_the_cheapest_route( map_name, origin, destination, fuel_autonomy, fuel_price )
+    return "invalid parameter"  if map_name.nil? ||  origin.nil? || destination.nil? || fuel_autonomy.nil? || fuel_price.nil?
+    map_id = Map.where( name: map_name ).pluck( :id )[0]
+    return "map_name not found" unless map_id
+    route = Route.where( origin_point: origin, map_id: map_id )
+    return "origin route not found" if route.empty?
+    #
+    # find the cheapest route algorithm begins here....
+    #
+    route = Route.where( origin_point: origin, map_id: map_id, destination_point: destination )
+    distance          = route.pluck( :distance )[0]
+    destination_point = route.pluck(:destination_point)[0]
+    total_cost        = fuel_price.to_f / fuel_autonomy.to_f * distance.to_f
+    { "distance": distance, "cost": total_cost, "directions": [origin, destination_point] }
+  end
+
   def self.error_message( api_params = nil, object = nil )
     return {} if api_params.nil? && object.nil?
     return {status: 'ERROR', code: 'TOO_FEW_PARAMETERS', fallback_msg: 'EMPTY OBJECT PARAMETER'} if api_params && object.nil?
