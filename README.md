@@ -74,7 +74,7 @@ lembre-se de executar no diretório da aplicação:
 
 **Exemplo de consulta pelo browser:**
 
-- **GET** [http://localhost:3000/api/v1/routes/get_route.json?map_name=SP&origin=A&destination=B&fuel_autonomy=10&fuel_price=2.5](http://localhost:3000/api/v1/routes/get_route.json?map_name=SP&origin=A&destination=B&fuel_autonomy=10&fuel_price=2.5)
+- **GET** [http://localhost:3000/api/v1/routes/get_route.json?map_name=SP&origin=A&destination=C&fuel_autonomy=10&fuel_price=2.5](http://localhost:3000/api/v1/routes/get_route.json?map_name=SP&origin=A&destination=C&fuel_autonomy=10&fuel_price=2.5)
 
 **Exemplo de resposta:**
 
