@@ -3,6 +3,8 @@ class Api::V1::RoutesController < Api::V1::BaseController
 
   def create_map
     # under construction
+    #
+    render json: {result: 1}
   end
 
   def get_route
