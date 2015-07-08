@@ -1,6 +1,10 @@
 class Api::V1::RoutesController < Api::V1::BaseController
   respond_to :json
 
+  def create_map
+    # under construction
+  end
+
   def get_route
     result_message = Api::V1::BaseController.find_the_cheapest_route(
       params[:map_name],

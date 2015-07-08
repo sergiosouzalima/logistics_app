@@ -3,9 +3,9 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::RoutesController, :type => :controller do
 
-  context "when invalid parameters" do
-    context "and map_name was not found" do
-      describe "GET #get_route" do
+  context "GET #get_route" do
+    context "when invalid parameters" do
+      describe "and map_name was not found" do
         before do
           param = {map_name:'XY',origin:'A',destination:'B',fuel_autonomy:10,fuel_price:2.5,format:'json'}
           FactoryGirl.create(:map)
@@ -21,9 +21,7 @@ RSpec.describe Api::V1::RoutesController, :type => :controller do
           expect(@result[:fallback_msg]).to eql "map_name not found"
         end
       end
-    end
-    context "and origin was not found" do
-      describe "GET #get_route" do
+      describe "and origin was not found" do
         before do
           param = {map_name:'SP',origin:'*',destination:'B',fuel_autonomy:10,fuel_price:2.5,format:'json'}
           FactoryGirl.create(:map)
@@ -39,9 +37,7 @@ RSpec.describe Api::V1::RoutesController, :type => :controller do
           expect(@result[:fallback_msg]).to eql "origin route not found"
         end
       end
-    end
-    context "and destination was not found" do
-      describe "GET #get_route" do
+      describe "and destination was not found" do
         before do
           param = {map_name:'SP',origin:'A',destination:'*',fuel_autonomy:10,fuel_price:2.5,format:'json'}
           FactoryGirl.create(:map)
@@ -58,10 +54,7 @@ RSpec.describe Api::V1::RoutesController, :type => :controller do
         end
       end
     end
-  end
-
-  context "when valid parameters" do
-    describe "GET #get_route" do
+    context "when valid parameters" do
       before do
         param = {map_name:'SP',origin:'A',destination:'B',fuel_autonomy:10,fuel_price:2.5,format:'json'}
         FactoryGirl.create(:map)
@@ -84,6 +77,5 @@ RSpec.describe Api::V1::RoutesController, :type => :controller do
       end
     end
   end
-
 end
 
