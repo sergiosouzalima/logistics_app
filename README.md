@@ -76,6 +76,10 @@ lembre-se de executar no diretório da aplicação:
 
 - **GET** [http://localhost:3000/api/v1/routes/get_route.json?map_name=SP&origin=A&destination=C&fuel_autonomy=10&fuel_price=2.5](http://localhost:3000/api/v1/routes/get_route.json?map_name=SP&origin=A&destination=C&fuel_autonomy=10&fuel_price=2.5)
 
+**Exemplo de consulta pelo terminal, usando o comando curl:**
+
+- **GET** [$ curl "http://localhost:3000/api/v1/routes/get_route.json?map_name=SP&origin=A&destination=C&fuel_autonomy=10&fuel_price=2.5"]($ curl "http://localhost:3000/api/v1/routes/get_route.json?map_name=SP&origin=A&destination=C&fuel_autonomy=10&fuel_price=2.5")
+
 **Exemplo de resposta:**
 
 ```html
