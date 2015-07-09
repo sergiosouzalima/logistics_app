@@ -120,19 +120,21 @@ lembre-se de executar no diretório da aplicação:
 **Exemplo de criaçao pelo terminal, usando o comando curl:**
 
 - $ curl localhost:3000/api/v1/routes/create_map.json -X POST \
--H "Accept: application/json" \
--H "Content-Type: application/json" \
--d @spec/fixtures/parameters.json
+- -H "Accept: application/json" \
+- -H "Content-Type: application/json" \
+- -d @spec/fixtures/parameters.json
 
 **Exemplo de resposta:**
 
 ```html
-{"name":"SP","status":"OK","code":"OK","fallback_msg":"Map and routes created successfully"}
+{"name":"SP","status":"OK","code":"OK",
+ "fallback_msg":"Map and routes created successfully"}
 ```
 
 **Exemplo de resposta com mensagem de erro:**
 
 ```html
-{"name":"SP","status":"ERROR","code":"WRONG_DATA","fallback_msg":"invalid parameter. 'Routes' must be a 3 elements hash"}
+{"name":"SP","status":"ERROR","code":"WRONG_DATA",
+ "fallback_msg":"invalid parameter. 'Routes' must be a 3 elements hash"}
 ```
 
