@@ -190,6 +190,19 @@ RSpec.describe Api::V1::BaseController, :type => :controller do
           expect(@result).to eql "origin route not found"
         end
       end
+       describe "and Destination Route was not found" do
+        before do
+          FactoryGirl.create(:map)
+          FactoryGirl.create(:route)
+          @result = Api::V1::BaseController.find_the_cheapest_route( 'SP', 'A', 'W', 10, 2.5 )
+        end
+        it "returns a String" do
+          expect(@result).to be_an_instance_of(String)
+        end
+        it "returns an error message" do
+          expect(@result).to eql "destination route not found"
+        end
+      end
     end
   end
 

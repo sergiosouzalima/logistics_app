@@ -8,6 +8,7 @@ class Api::V1::BaseController < ActionController::Base
   end
 
   def self.create_map_routes( map_name, routes )
+    # parameters validation
     return "invalid parameter" if map_name.nil? || routes.nil?
     return "invalid parameter. 'Routes' is empty" if routes.empty?
     # check elements in routes array
@@ -25,7 +26,9 @@ class Api::V1::BaseController < ActionController::Base
       end
     end
     return "invalid parameter. All elements in 'Routes' must have a value" if elements_in_hash_value_error
+    #
     # create map and routes
+    #
     error = false
     message = "Map and routes created successfully"
     begin
@@ -44,17 +47,19 @@ class Api::V1::BaseController < ActionController::Base
 
 
   def self.find_the_cheapest_route( map_name, origin, destination, fuel_autonomy, fuel_price )
+    # parameters validation
     return "invalid parameter"  if map_name.nil? ||  origin.nil? || destination.nil? || fuel_autonomy.nil? || fuel_price.nil?
-    return "invalid parameter. fuel_autonomy is 0" if fuel_autonomy.zero?
+    return "invalid parameter. fuel_autonomy is 0" if fuel_autonomy.to_f.zero?
     map_id = Map.where( name: map_name ).pluck( :id )[0]
     return "map_name not found" unless map_id
     route = Route.where( origin_point: origin, map_id: map_id )
     return "origin route not found" if route.empty?
+    route = Route.where( destination_point: destination, map_id: map_id )
+    return "destination route not found" if route.empty?
     #
     # find the cheapest route algorithm begins here....
     #
-    route = Route.where( origin_point: origin, map_id: map_id, destination_point: destination )
-    return "destination route not found" if route.empty?
+
     distance          = route.pluck( :distance )[0]
     destination_point = route.pluck(:destination_point)[0]
     total_cost        = fuel_price.to_f / fuel_autonomy.to_f * distance.to_f
