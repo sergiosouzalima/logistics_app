@@ -3,6 +3,128 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::BaseController, :type => :controller do
 
+  context "#create_map_routes" do
+    context "when invalid parameters" do
+      describe "and no parameters are present" do
+        before do
+          @result = Api::V1::BaseController.create_map_routes( nil, nil )
+        end
+        it "returns a String" do
+          expect(@result).to be_an_instance_of(String)
+        end
+        it "returns an error message" do
+          expect(@result).to eql "invalid parameter"
+        end
+      end
+      describe "and routes is an empty array" do
+        before do
+          @result = Api::V1::BaseController.create_map_routes( "SP", [] )
+        end
+        it "returns a String" do
+          expect(@result).to be_an_instance_of(String)
+        end
+        it "returns an error message" do
+          expect(@result).to eql "invalid parameter. 'Routes' is empty"
+        end
+      end
+      describe "and routes does not have a 3 elements hash" do
+        before do
+          @result = Api::V1::BaseController.create_map_routes( "SP",
+                                                              [{"origin":"A","destination":"B","distance":10},
+                                                               {"origin":"A","destination":"C"},
+                                                               {"origin":"A","destination":"D","distance":25}]
+                                                             )
+        end
+        it "returns a String" do
+          expect(@result).to be_an_instance_of(String)
+        end
+        it "returns an error message" do
+          expect(@result).to eql "invalid parameter. 'Routes' must be a 3 elements hash"
+        end
+      end
+      describe "and routes does not have a 3 elements hash with value" do
+        before do
+          @result = Api::V1::BaseController.create_map_routes( "SP",
+                                                              [{"origin":"A","destination":"B","distance":10},
+                                                               {"origin":"A","destination":"","distance":20}]
+                                                             )
+        end
+        it "returns a String" do
+          expect(@result).to be_an_instance_of(String)
+        end
+        it "returns an error message" do
+          expect(@result).to eql "invalid parameter. All elements in 'Routes' must have a value"
+        end
+      end
+    end
+    context "when valid parameters" do
+      describe "and Map doesn't exist" do
+        before do
+          @map_name = "MS"
+          routes = [{"distance": 10, "origin": "A", "destination": "B"},
+                    {"distance": 15, "origin": "B", "destination": "D"}]
+          @result = Api::V1::BaseController.create_map_routes( @map_name, routes )
+        end
+        it "returns a String" do
+          expect(@result).to be_an_instance_of(String)
+        end
+        it "returns a successfully creating message" do
+          expect(@result).to eql "Map and routes created successfully"
+        end
+        it "returns the Map name correctly" do
+          map = Map.find_by( name: @map_name )
+          expect(map[:name]).to eql @map_name
+        end
+        it "returns all routes correctly" do
+          routes      = [{"distance": 10, "origin": "A", "destination": "B"},
+                         {"distance": 15, "origin": "B", "destination": "D"}]
+          map_id      = Map.find_by( name: "MS" ).id
+          rec_counter = 0
+          routes.each do |key|
+            qty = Route.where( distance: key[:distance], origin_point: key[:origin],
+                              destination_point: key[:destination], map_id: map_id ).count
+            rec_counter += 1
+          end
+          expect(rec_counter).to eql routes.size
+        end
+      end
+      describe "and Map already exists" do
+        before do
+          @map_name = "MS"
+          routes = [{"distance": 10, "origin": "A", "destination": "B"},
+                    {"distance": 15, "origin": "B", "destination": "D"}]
+          @result = Api::V1::BaseController.create_map_routes( @map_name, routes )
+        end
+        it "returns a String" do
+          expect(@result).to be_an_instance_of(String)
+        end
+        it "returns a successfully creating message" do
+          expect(@result).to eql "Map and routes created successfully"
+        end
+        it "returns only one Map" do
+          map_qty = Map.where( name: @map_name ).count
+          expect(map_qty).to eql 1
+        end
+        it "returns the Map name correctly" do
+          map = Map.find_by( name: @map_name )
+          expect(map[:name]).to eql @map_name
+        end
+        it "returns all routes correctly" do
+          routes      = [{"distance": 10, "origin": "A", "destination": "B"},
+                         {"distance": 15, "origin": "B", "destination": "D"}]
+          map_id      = Map.find_by( name: "MS" ).id
+          rec_counter = 0
+          routes.each do |key|
+            qty = Route.where( distance: key[:distance], origin_point: key[:origin],
+                              destination_point: key[:destination], map_id: map_id ).count
+            rec_counter += 1
+          end
+          expect(rec_counter).to eql routes.size
+        end
+      end
+    end
+  end
+
   context "#find_the_cheapest_route" do
     context "when valid parameters" do
       describe "and a route is found" do
@@ -31,6 +153,17 @@ RSpec.describe Api::V1::BaseController, :type => :controller do
         end
         it "returns an error message" do
           expect(@result).to eql "invalid parameter"
+        end
+      end
+      describe "and fuel_autonomy is zero and other parameters are present" do
+        before do
+          @result = Api::V1::BaseController.find_the_cheapest_route( "SP", "A", "B", 0, 2.5 )
+        end
+        it "returns a String" do
+          expect(@result).to be_an_instance_of(String)
+        end
+        it "returns an error message" do
+          expect(@result).to eql "invalid parameter. fuel_autonomy is 0"
         end
       end
       describe "and Map was not found" do

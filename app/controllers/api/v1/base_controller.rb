@@ -1,4 +1,5 @@
 class Api::V1::BaseController < ActionController::Base
+  respond_to :json
   before_filter :permit_parameters
 
   #  We use this filter to allow the sending of any size of parameters
@@ -6,8 +7,45 @@ class Api::V1::BaseController < ActionController::Base
     params.permit!
   end
 
+  def self.create_map_routes( map_name, routes )
+    return "invalid parameter" if map_name.nil? || routes.nil?
+    return "invalid parameter. 'Routes' is empty" if routes.empty?
+    # check elements in routes array
+    elements_in_hash_qty_error = false
+    routes.each{ |e| elements_in_hash_qty_error = e.keys.size != 3 unless elements_in_hash_qty_error}
+    return "invalid parameter. 'Routes' must be a 3 elements hash" if elements_in_hash_qty_error
+    # check if all elements in routes array, has a value
+    elements_in_hash_value_error = false
+    routes.each do |e|
+      e.each do |key,value|
+        elements_in_hash_value_error = value.nil? unless elements_in_hash_value_error
+        if value.is_a? String
+          elements_in_hash_value_error = value.empty? unless elements_in_hash_value_error
+        end
+      end
+    end
+    return "invalid parameter. All elements in 'Routes' must have a value" if elements_in_hash_value_error
+    # create map and routes
+    error = false
+    message = "Map and routes created successfully"
+    begin
+      map = Map.find_or_create_by(name: map_name)
+      Route.find_or_create_by( map_id: map.id )
+      routes.each do |r|
+        Route.create_with(distance: r[:distance]).
+          find_or_create_by(origin_point: r[:origin], destination_point: r[:destination], map_id: map.id)
+      end
+    rescue
+      error = true
+    end
+    message = "Error creating map and/or routes" if error
+    return message
+  end
+
+
   def self.find_the_cheapest_route( map_name, origin, destination, fuel_autonomy, fuel_price )
     return "invalid parameter"  if map_name.nil? ||  origin.nil? || destination.nil? || fuel_autonomy.nil? || fuel_price.nil?
+    return "invalid parameter. fuel_autonomy is 0" if fuel_autonomy.zero?
     map_id = Map.where( name: map_name ).pluck( :id )[0]
     return "map_name not found" unless map_id
     route = Route.where( origin_point: origin, map_id: map_id )
