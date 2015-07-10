@@ -138,3 +138,89 @@ lembre-se de executar no diretório da aplicação:
  "fallback_msg":"invalid parameter. 'Routes' must be a 3 elements hash"}
 ```
 
+### OUTRAS INFORMAÇOES
+-----------------------------
+
+**Arquivo json disponivel para testes:**
+
+```html
+- Dentro da pasta da aplicação:
+
+$ cat spec/fixtures/parameters.json
+{
+    "map_name": "SP",
+    "routes": [
+        {
+            "origin": "A",
+            "destination": "B",
+            "distance": "10"
+        },
+        {
+            "origin": "B",
+            "destination": "D",
+            "distance": "15"
+        },
+        {
+            "origin": "A",
+            "destination": "C",
+            "distance": "20"
+        },
+        {
+            "origin": "C",
+            "destination": "D",
+            "distance": "30"
+        },
+        {
+            "origin": "B",
+            "destination": "E",
+            "distance": "50"
+        },
+        {
+            "origin": "D",
+            "destination": "E",
+            "distance": "30"
+        }
+    ]
+}
+```
+
+**Todos os testes automatizados podem ser executados, como no exemplo:**
+
+```html
+- Dentro da pasta da aplicação:
+
+$ rspec
+
+Api::V1::BaseController
+  #create_map_routes
+    when invalid parameters
+      and no parameters are present
+        returns a String
+        returns an error message
+      and routes is an empty array
+        returns a String
+        returns an error message
+      and routes does not have a 3 elements hash
+        returns a String
+        returns an error message
+      and routes does not have a 3 elements hash with value
+        returns a String
+        returns an error message
+    when valid parameters
+      and Map doesn't exist
+        returns a String
+        returns a successfully creating message
+        returns the Map name correctly
+        returns all routes correctly
+      and Map already exists
+        returns a String
+        returns a successfully creating message
+        returns only one Map
+        returns the Map name correctly
+        returns all routes correctly
+  #find_the_cheapest_route
+    .......
+      .....
+        ...
+```
+
