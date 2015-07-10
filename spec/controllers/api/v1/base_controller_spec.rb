@@ -127,19 +127,79 @@ RSpec.describe Api::V1::BaseController, :type => :controller do
 
   context "#find_the_cheapest_route" do
     context "when valid parameters" do
-      describe "and a route is found" do
+      describe "and was given a simple origin & destination points, eg. A,B or A,C" do
         before do
           FactoryGirl.create(:map)
-          FactoryGirl.create(:route)
-          @result = Api::V1::BaseController.find_the_cheapest_route( 'SP', 'A', 'B', 10, 2.5 )
+          FactoryGirl.create(:route, origin_point: "A", destination_point: "B", distance: 10)
+          FactoryGirl.create(:route, origin_point: "A", destination_point: "C", distance: 20)
+          FactoryGirl.create(:route, origin_point: "B", destination_point: "D", distance: 15)
+          FactoryGirl.create(:route, origin_point: "B", destination_point: "E", distance: 50)
+          FactoryGirl.create(:route, origin_point: "C", destination_point: "D", distance: 30)
+          FactoryGirl.create(:route, origin_point: "D", destination_point: "E", distance: 30)
+          @result1 = Api::V1::BaseController.find_the_cheapest_route( 'SP', 'A', 'B', 10, 2.5 )
+          @result2 = Api::V1::BaseController.find_the_cheapest_route( 'SP', 'A', 'C', 10, 2.5 )
+          @result3 = Api::V1::BaseController.find_the_cheapest_route( 'SP', 'D', 'E', 10, 2.5 )
         end
         it "returns a Hash" do
-          expect(@result).to be_an_instance_of(Hash)
+          expect(@result1).to be_an_instance_of(Hash)
+          expect(@result2).to be_an_instance_of(Hash)
+          expect(@result3).to be_an_instance_of(Hash)
         end
         it "returns a hash with valid elements" do
-          expect(@result[:distance]).to eql 10
-          expect(@result[:cost]).to eql 2.5
-          expect(@result[:directions]).to eql ['A','B']
+          expect(@result1[:distance]).to eql 10
+          expect(@result1[:cost]).to eql 2.5
+          expect(@result1[:directions]).to eql ['A','B']
+          expect(@result2[:distance]).to eql 20
+          expect(@result2[:cost]).to eql 5.0
+          expect(@result2[:directions]).to eql ['A','C']
+          expect(@result3[:distance]).to eql 30
+          expect(@result3[:cost]).to eql 7.5
+          expect(@result3[:directions]).to eql ['D','E']
+        end
+      end
+      describe "and was given a short path eg. A,D or C,E" do
+        before do
+          FactoryGirl.create(:map)
+          FactoryGirl.create(:route, origin_point: "A", destination_point: "B", distance: 10)
+          FactoryGirl.create(:route, origin_point: "A", destination_point: "C", distance: 20)
+          FactoryGirl.create(:route, origin_point: "B", destination_point: "D", distance: 15)
+          FactoryGirl.create(:route, origin_point: "B", destination_point: "E", distance: 50)
+          FactoryGirl.create(:route, origin_point: "C", destination_point: "D", distance: 30)
+          FactoryGirl.create(:route, origin_point: "D", destination_point: "E", distance: 30)
+          @result1 = Api::V1::BaseController.find_the_cheapest_route( 'SP', 'A', 'D', 10, 2.5 )
+          @result2 = Api::V1::BaseController.find_the_cheapest_route( 'SP', 'C', 'E', 10, 2.5 )
+        end
+        it "returns a Hash" do
+          expect(@result1).to be_an_instance_of(Hash)
+          expect(@result2).to be_an_instance_of(Hash)
+        end
+        it "returns a hash with valid elements" do
+          expect(@result1[:distance]).to eql 25
+          expect(@result1[:cost]).to eql 6.25
+          expect(@result1[:directions]).to eql ['A','B','D']
+          expect(@result2[:distance]).to eql 60
+          expect(@result2[:cost]).to eql 15.0
+          expect(@result2[:directions]).to eql ['C','D','E']
+        end
+      end
+      describe "and was given a long path eg. A,E" do
+        before do
+          FactoryGirl.create(:map)
+          FactoryGirl.create(:route, origin_point: "A", destination_point: "B", distance: 10)
+          FactoryGirl.create(:route, origin_point: "A", destination_point: "C", distance: 20)
+          FactoryGirl.create(:route, origin_point: "B", destination_point: "D", distance: 15)
+          FactoryGirl.create(:route, origin_point: "B", destination_point: "E", distance: 50)
+          FactoryGirl.create(:route, origin_point: "C", destination_point: "D", distance: 30)
+          FactoryGirl.create(:route, origin_point: "D", destination_point: "E", distance: 30)
+          @result1 = Api::V1::BaseController.find_the_cheapest_route( 'SP', 'A', 'E', 10, 2.5 )
+        end
+        it "returns a Hash" do
+          expect(@result1).to be_an_instance_of(Hash)
+        end
+        it "returns a hash with valid elements" do
+          expect(@result1[:distance]).to eql 60
+          expect(@result1[:cost]).to eql 15.0
+          expect(@result1[:directions]).to eql ['A','B','E']
         end
       end
     end
@@ -190,7 +250,7 @@ RSpec.describe Api::V1::BaseController, :type => :controller do
           expect(@result).to eql "origin route not found"
         end
       end
-       describe "and Destination Route was not found" do
+      describe "and Destination Route was not found" do
         before do
           FactoryGirl.create(:map)
           FactoryGirl.create(:route)

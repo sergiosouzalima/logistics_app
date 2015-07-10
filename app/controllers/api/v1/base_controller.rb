@@ -59,11 +59,30 @@ class Api::V1::BaseController < ActionController::Base
     #
     # find the cheapest route algorithm begins here....
     #
-
-    distance          = route.pluck( :distance )[0]
-    destination_point = route.pluck(:destination_point)[0]
-    total_cost        = fuel_price.to_f / fuel_autonomy.to_f * distance.to_f
-    { "distance": distance, "cost": total_cost, "directions": [origin, destination_point] }
+    first_iteration   = true
+    destination_found = false
+    current_point     = origin
+    path              = []
+    loop do
+      r = Route.where( origin_point: current_point, destination_point: destination, map_id: map_id ).select( :destination_point, :distance )[0]
+      if r.nil?
+        r = Route.where( origin_point: current_point, map_id: map_id ).select( :destination_point, :distance ).first
+      end
+      break if r.nil?
+      cur_dest, cur_distance = r[:destination_point], r[:distance]
+      path << [current_point, cur_dest, cur_distance]
+      destination_found = cur_dest == destination
+      break if destination_found
+      current_point = cur_dest
+    end
+    # distances sum
+    dist_sum    = path.inject(0){ |sum,e| sum + e[2] }
+    # final cost calculation
+    total_cost  = (fuel_price.to_f / fuel_autonomy.to_f * dist_sum).round(2)
+    # build final directions array
+    directions = []
+    path.each{ |e| directions << e[0] << e[1] }
+    { "distance": dist_sum, "cost": total_cost, "directions": directions.uniq }
   end
 
   def self.error_message( api_params = nil, object = nil )
